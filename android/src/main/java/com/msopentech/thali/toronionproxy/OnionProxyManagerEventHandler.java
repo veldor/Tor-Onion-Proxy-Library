@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Logs the data we get from notifications from the Tor OP. This is really just meant for debugging.

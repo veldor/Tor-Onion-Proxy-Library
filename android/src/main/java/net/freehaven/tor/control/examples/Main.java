@@ -106,9 +106,7 @@ public class Main implements TorControlCommands {
         // Usage: listen [circ|stream|orconn|bw|newdesc|info|notice|warn|error]*
         TorControlConnection conn = getConnection(args, false);
         ArrayList<String> lst = new ArrayList<String>();
-        for (int i = 1; i < args.length; ++i) {
-            lst.add(args[i]);
-        }
+        lst.addAll(Arrays.asList(args).subList(1, args.length));
         conn.setEventHandler(
             new DebuggingEventHandler(new PrintWriter(System.out, true)));
         conn.setEvents(lst);

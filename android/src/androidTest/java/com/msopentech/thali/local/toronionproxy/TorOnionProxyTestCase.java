@@ -14,9 +14,8 @@ See the Apache 2 License for the specific language governing permissions and lim
 package com.msopentech.thali.local.toronionproxy;
 
 import android.test.AndroidTestCase;
-import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyContext;
+
 import com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager;
-import com.msopentech.thali.toronionproxy.OnionProxyContext;
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
 
 public class TorOnionProxyTestCase extends AndroidTestCase {
