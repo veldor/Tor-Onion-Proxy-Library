@@ -31,10 +31,16 @@ package com.msopentech.thali.toronionproxy;
 
 import net.freehaven.tor.control.ConfigEntry;
 import net.freehaven.tor.control.TorControlConnection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collections;
@@ -298,6 +304,13 @@ public abstract class OnionProxyManager {
         }
 
         return false;
+    }
+
+    public String getLastLog() {
+        if (controlConnection != null)
+            return controlConnection.getLastLog();
+        else
+            return "";
     }
 
     /**

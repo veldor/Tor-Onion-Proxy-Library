@@ -42,6 +42,11 @@ import java.util.Map;
  */
 public class OnionProxyManagerEventHandler implements EventHandler {
     private static final Logger LOG = LoggerFactory.getLogger(OnionProxyManagerEventHandler.class);
+    private String lastLog="";
+    public String getLastLog()
+    {
+        return lastLog;
+    }
 /*
     public void circuitStatus(String status, String id, List<String> path, Map<String, String> info) {
         String msg = "CircuitStatus: " + id + " " + status;
@@ -64,6 +69,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         //if(rendQuery != null) msg += ", service: " + rendQuery;
         if(!path.isEmpty()) msg += ", path: " + shortenPath(path);
         LOG.info(msg);
+        lastLog=msg;
     }
 
     public void streamStatus(String status, String id, String target) {
@@ -89,10 +95,12 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     public void message(String severity, String msg) {
         LOG.info("message: severity: " + severity + ", msg: " + msg);
+        lastLog=msg;
     }
 
     public void unrecognized(String type, String msg) {
         LOG.info("unrecognized: type: " + type + ", msg: " + msg);
+        lastLog=msg;
     }
 
     private String shortenPath(List<String> path) {

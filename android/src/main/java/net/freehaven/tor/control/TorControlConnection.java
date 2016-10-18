@@ -2,6 +2,8 @@
 // See LICENSE file for copying information
 package net.freehaven.tor.control;
 
+import com.msopentech.thali.toronionproxy.OnionProxyManagerEventHandler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -267,6 +269,10 @@ public class TorControlConnection implements TorControlCommands {
      * events, call setEvents(). */
     public void setEventHandler(EventHandler handler) {
         this.handler = handler;
+    }
+    public String getLastLog()
+    {
+        return ((OnionProxyManagerEventHandler)handler).getLastLog();
     }
 
     /**
