@@ -37,7 +37,9 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+
 import com.msopentech.thali.toronionproxy.OnionProxyManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,27 +113,33 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
 
     private class NetworkStateReceiver extends BroadcastReceiver {
         @Override
-        public void onReceive(Context ctx, Intent i) {
-            try {
-                if(!isRunning()) return;
-            } catch (IOException e) {
-                LOG.info("Did someone call before Tor was ready?", e);
-                return;
-            }
-            boolean online = !i.getBooleanExtra(EXTRA_NO_CONNECTIVITY, false);
-            if(online) {
-                // Some devices fail to set EXTRA_NO_CONNECTIVITY, double check
-                Object o = ctx.getSystemService(CONNECTIVITY_SERVICE);
-                ConnectivityManager cm = (ConnectivityManager) o;
-                NetworkInfo net = cm.getActiveNetworkInfo();
-                if(net == null || !net.isConnected()) online = false;
-            }
-            LOG.info("Online: " + online);
-            try {
-                enableNetwork(online);
-            } catch(IOException e) {
-                LOG.warn(e.toString(), e);
-            }
+        public void onReceive(final Context ctx, final Intent i) {
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        if (!isRunning()) return;
+                    } catch (IOException e) {
+                        LOG.info("Did someone call before Tor was ready?", e);
+                        return;
+                    }
+                    boolean online = !i.getBooleanExtra(EXTRA_NO_CONNECTIVITY, false);
+                    if (online) {
+                        // Some devices fail to set EXTRA_NO_CONNECTIVITY, double check
+                        Object o = ctx.getSystemService(CONNECTIVITY_SERVICE);
+                        ConnectivityManager cm = (ConnectivityManager) o;
+                        NetworkInfo net = cm.getActiveNetworkInfo();
+                        if (net == null || !net.isConnected()) online = false;
+                    }
+                    LOG.info("Online: " + online);
+                    try {
+                        enableNetwork(online);
+                    } catch (IOException e) {
+                        LOG.warn(e.toString(), e);
+                    }
+                }
+            }.start();
         }
     }
 }
