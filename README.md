@@ -21,15 +21,12 @@ Just build it or download from releases. Then include in your project (slf4j lib
 
 allprojects {
     repositories {
-        jcenter()
-        flatDir {
-            dirs 'libs'
-        }
+    maven { url 'https://jitpack.io' }
     }
 }
 
 dependencies {
-    compile(name: 'ThaliOnionProxyAndroid-release', ext: 'aar')
+    compile 'com.github.jehy:Tor-Onion-Proxy-Library:0.0.5'
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.slf4j:slf4j-android:1.7.7'
 }
