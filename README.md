@@ -1,47 +1,10 @@
-Tor Onion Proxy Library - with tor 0.3.1.7 built with NDK r15b
+Tor Onion Proxy Library
 =======================
 # What is this fork?
 This is a fork of [Thali Projects's Tor Onion Proxy Library](https://github.com/thaliproject/Tor_Onion_Proxy_Library) which was pretty outdated,
 hard to build, contained no release of library itself and no simple examples. I updated it's components, made build easier and added release library.
 Readme is updated to reflect those changes and contains a simple example on how to use this library.
 Also I removed all data on non-android builds - there are many other easier ways to use Tor on Windows and OS/X.
-
-__This fork includes latest tor built with ndk r15b, using:__
-
-__openssl1.1.0f__
-
-__libevent 2.0.23stable__
-
-__latest tor (currently 0.3.1.7)__
-
-
-# How to build aar file on Linux
-
-define the ANDROID_HOME environment variable, pointing to Android Sdk and start gradle:
-
-```export ANDROID_HOME=/home/marco/Android/Sdk/
-bash gradlew assembleRelease
-```
-the resulting file is:
-
-./build/outputs/aar/ThaliOnionProxyAndroid-release.aar
-
-You can use this aar directly in your Android Studio project, see for example:
-
-https://stackoverflow.com/questions/24506648/adding-local-aar-files-to-gradle-build-using-flatdirs-is-not-working/28816265
-
-You can import a local aar file via the File>New>New Module>Import .JAR/.AAR Package option in Android Studio.
-
-Then add the following to build.gradle:
-
-```
-dependencies {
-    compile project(':ThaliOnionProxyAndroid-release')
-    compile 'org.slf4j:slf4j-api:1.7.7'
-    compile 'org.slf4j:slf4j-android:1.7.7'
-}    
-```
-
 
 # What is this project?
 NOTE: This project exists independently of the Tor Project.
@@ -53,7 +16,12 @@ __Why__: It's sort of a pain to deploy and manage the Tor OP, we want to make it
 __How__: We are really just a thin Java wrapper around the Tor OP binaries and jtorctl. 
 
 # How do I include this library?
-Just build it or download from releases. Then include in your project (slf4j libraries are required for logging):
+There are three ways to use this library:
+* Build it using instructions below;
+* Download compiled version from releases section;
+* Add it as maven dependency
+
+Please note that (slf4j libraries are required for logging):
 ```groovy
 
 allprojects {
@@ -69,6 +37,15 @@ dependencies {
 }
 
 ```
+
+# Currently used Tor version
+
+This fork is built with ndk r15b, using
+
+* openssl 1.1.0f
+* libevent 2.0.23 stable
+* latest tor for september 18, 2017 (0.3.1.7)
+
 
 # How do I use this library?
 First, you need to run Tor service. That's pretty simple:
@@ -231,8 +208,35 @@ And of course an endless amount of gratitude to the heroes of the Tor project fo
 
 # FAQ
 
+
+## How to build aar file on Linux
+
+define the ANDROID_HOME environment variable, pointing to Android Sdk and start gradle:
+
+```export ANDROID_HOME=/home/marco/Android/Sdk/
+bash gradlew assembleRelease
+```
+the resulting file is:
+
+./build/outputs/aar/ThaliOnionProxyAndroid-release.aar
+
+You can use this aar directly in your Android Studio project, 
+check example [here](https://stackoverflow.com/questions/24506648/adding-local-aar-files-to-gradle-build-using-flatdirs-is-not-working/28816265).
+
+You can import a local aar file via the File>New>New Module>Import .JAR/.AAR Package option in Android Studio.
+
+Then add the following to build.gradle:
+
+```
+dependencies {
+    compile project(':ThaliOnionProxyAndroid-release')
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.slf4j:slf4j-android:1.7.7'
+}    
+```
+
 ## What is the maturity of the code in this project?
-Well the release version is currently 0.0.3 so that should say something. This is an alpha. We have (literally) one test. Obviously we need a heck of a lot more coverage. But we have run that test and it does actually work which means that the Tor OP is being run and is available.
+Well the release version is currently 0.0.6 so that should say something. This is an alpha. We have (literally) one test. Obviously we need a heck of a lot more coverage. But we have run that test and it does actually work which means that the Tor OP is being run and is available.
 
 ## Can I run multiple programs next to each other that use this library?
 Yes, they won't interfere with each other. We use dynamic ports for both the control and socks channel. 
