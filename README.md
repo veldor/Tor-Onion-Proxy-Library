@@ -31,7 +31,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.jehy:Tor-Onion-Proxy-Library:0.0.5'
+    compile 'com.github.jehy:Tor-Onion-Proxy-Library:0.0.7'
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.slf4j:slf4j-android:1.7.7'
 }
@@ -40,11 +40,8 @@ dependencies {
 
 # Currently used Tor version
 
-This fork is built with ndk r15b, using
-
-* openssl 1.1.0f
-* libevent 2.0.23 stable
-* latest tor for september 18, 2017 (0.3.1.7)
+This fork is built using
+* latest tor for jan 5, 2018 (0.3.1.9)
 
 
 # How do I use this library?
