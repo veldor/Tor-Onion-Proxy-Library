@@ -1,5 +1,6 @@
 Tor Onion Proxy Library
 =======================
+[![](https://jitpack.io/v/jehy/Tor-Onion-Proxy-Library.svg)](https://jitpack.io/#jehy/Tor-Onion-Proxy-Library)
 # What is this fork?
 This is a fork of [Thali Projects's Tor Onion Proxy Library](https://github.com/thaliproject/Tor_Onion_Proxy_Library) which was pretty outdated,
 hard to build, contained no release of library itself and no simple examples. I updated it's components, made build easier and added release library.
