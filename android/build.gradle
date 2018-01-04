@@ -13,18 +13,23 @@ See the Apache 2 License for the specific language governing permissions and lim
 
 buildscript {
     repositories {
+        google()
         mavenCentral()
-	jcenter()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0' // for jitpack
     }
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
+group='com.github.jehy'
 
 repositories {
+    google()
     mavenCentral()
 }
 
