@@ -1,6 +1,10 @@
+# This repo fixes the a minor DNS resolution issue for onion addresses that I faced when using the sample code provided in the README of [jehy/Tor-Onion-Proxy-Library](https://github.com/jehy/Tor-Onion-Proxy-Library). Check out the sample app included in this repo for reference on how to use this library. Also read the instructions below written by [jehy](https://github.com/jehy) in his fork.
+
+
 Tor Onion Proxy Library
 =======================
 [![](https://jitpack.io/v/jehy/Tor-Onion-Proxy-Library.svg)](https://jitpack.io/#jehy/Tor-Onion-Proxy-Library)
+
 # What is this fork?
 This is a fork of [Thali Projects's Tor Onion Proxy Library](https://github.com/thaliproject/Tor_Onion_Proxy_Library) which was pretty outdated,
 hard to build, contained no release of library itself and no simple examples. I updated it's components, made build easier and added release library.
@@ -130,28 +134,28 @@ public class MyConnectionSocketFactory extends PlainConnectionSocketFactory {
 ```
 It is very easy to use. At first, create HttpClient which uses those factories:
 ```Java
-    //HttpClient tries to resolve host names locally, so by creating this FakeDnsResolver, it can be avoided
-    // Source of this hack: https://stackoverflow.com/a/25203021
-    static class FakeDnsResolver implements DnsResolver {
-        @Override
-        public InetAddress[] resolve(String host) throws UnknownHostException {
-            // Return some fake DNS record for every request, we won't be using it
-            return new InetAddress[] { InetAddress.getByAddress(new byte[] { 1, 1, 1, 1 }) };
-        }
+//HttpClient tries to resolve host names locally, so by creating this FakeDnsResolver, it can be avoided
+// Source of this hack: https://stackoverflow.com/a/25203021
+static class FakeDnsResolver implements DnsResolver {
+	@Override
+    public InetAddress[] resolve(String host) throws UnknownHostException {
+    	// Return some fake DNS record for every request, we won't be using it
+        return new InetAddress[] { InetAddress.getByAddress(new byte[] { 1, 1, 1, 1 }) };
     }
+}
 
 
-    public HttpClient getNewHttpClient() {
+public HttpClient getNewHttpClient() {
 
-        Registry<ConnectionSocketFactory> reg = RegistryBuilder.<ConnectionSocketFactory>create()
+	Registry<ConnectionSocketFactory> reg = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", new MyConnectionSocketFactory())
                 .register("https", new MySSLConnectionSocketFactory(SSLContexts.createSystemDefault()))
                 .build();
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(reg,new FakeDnsResolver());
-        return HttpClients.custom()
+	PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(reg,new FakeDnsResolver());
+    return HttpClients.custom()
                 .setConnectionManager(cm)
                 .build();
-    }
+}
 ```
 Then set your Tor proxy:
 ```Java
