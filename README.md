@@ -49,8 +49,8 @@ This fork is built using
 First, you need to run Tor service. That's pretty simple:
 ```Java
 String fileStorageLocation = "torfiles";
-            com.msopentech.thali.toronionproxy.OnionProxyManager onionProxyManager =
-            new com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager(getApplicationContext(), fileStorageLocation);
+OnionProxyManager onionProxyManager =
+            new AndroidOnionProxyManager(getApplicationContext(), fileStorageLocation);
 int totalSecondsPerTorStartup = 4 * 60;
 int totalTriesPerTorStartup = 5;
 try {
