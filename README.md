@@ -48,6 +48,9 @@ This fork is built using
 # How do I use this library?
 First, you need to run Tor service. That's pretty simple:
 ```Java
+String fileStorageLocation = "torfiles";
+            com.msopentech.thali.toronionproxy.OnionProxyManager onionProxyManager =
+            new com.msopentech.thali.android.toronionproxy.AndroidOnionProxyManager(getApplicationContext(), fileStorageLocation);
 int totalSecondsPerTorStartup = 4 * 60;
 int totalTriesPerTorStartup = 5;
 try {
@@ -83,57 +86,31 @@ public class MySSLConnectionSocketFactory extends SSLConnectionSocketFactory {
 
     @Override
     public Socket createSocket(final HttpContext context) throws IOException {
-        return new Socket();
+        InetSocketAddress socksaddr = (InetSocketAddress) context.getAttribute("socks.address");
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, socksaddr);
+        return new Socket(proxy);
     }
 
     @Override
-    public Socket connectSocket(
-            int connectTimeout,
-            Socket socket,
-            final HttpHost host,
-            final InetSocketAddress remoteAddress,
-            final InetSocketAddress localAddress,
-            final HttpContext context) throws IOException {
-        Args.notNull(host, "HTTP host");
-        Args.notNull(remoteAddress, "Remote address");
-        InetSocketAddress socksaddr = (InetSocketAddress) context.getAttribute("socks.address");
-        socket = new Socket();
-        connectTimeout = 100000;
-        socket.setSoTimeout(connectTimeout);
-        socket.connect(new InetSocketAddress(socksaddr.getHostName(), socksaddr.getPort()), connectTimeout);
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.write((byte) 0x04);
-        outputStream.write((byte) 0x01);
-        outputStream.writeShort((short) host.getPort());
-        outputStream.writeInt(0x01);
-        outputStream.write((byte) 0x00);
-        outputStream.write(host.getHostName().getBytes());
-        outputStream.write((byte) 0x00);
-
-        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        if (inputStream.readByte() != (byte) 0x00 || inputStream.readByte() != (byte) 0x5a) {
-            throw new IOException("SOCKS4a connect failed");
-        } else
-            Log.v("SSLConnectionSF", "SOCKS4a connect ok!");
-        inputStream.readShort();
-        inputStream.readInt();
-
-        SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
-        SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createLayeredSocket(socket, host.getHostName(), host.getPort(), context);
-        prepareSocket(sslSocket);
-        return sslSocket;
+    public Socket connectSocket(int connectTimeout, Socket socket, HttpHost host, InetSocketAddress remoteAddress,
+                                InetSocketAddress localAddress, HttpContext context) throws IOException {
+        // Convert address to unresolved
+        InetSocketAddress unresolvedRemote = InetSocketAddress
+                .createUnresolved(host.getHostName(), remoteAddress.getPort());
+        return super.connectSocket(connectTimeout, socket, host, unresolvedRemote, localAddress, context);
     }
-
 }
 ```
 
 **ConnectionSocketFactory:**
 ```Java
-public class MyConnectionSocketFactory implements ConnectionSocketFactory {
+public class MyConnectionSocketFactory extends PlainConnectionSocketFactory {
 
     @Override
     public Socket createSocket(final HttpContext context) throws IOException {
-        return new Socket();
+        InetSocketAddress socksaddr = (InetSocketAddress) context.getAttribute("socks.address");
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, socksaddr);
+        return new Socket(proxy);
     }
 
     @Override
@@ -145,42 +122,32 @@ public class MyConnectionSocketFactory implements ConnectionSocketFactory {
             final InetSocketAddress localAddress,
             final HttpContext context) throws IOException, ConnectTimeoutException {
 
-        InetSocketAddress socksaddr = (InetSocketAddress) context.getAttribute("socks.address");
-        socket = new Socket();
-        connectTimeout = 100000;
-        socket.setSoTimeout(connectTimeout);
-        socket.connect(new InetSocketAddress(socksaddr.getHostName(), socksaddr.getPort()), connectTimeout);
-
-
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.write((byte) 0x04);
-        outputStream.write((byte) 0x01);
-        outputStream.writeShort((short) host.getPort());
-        outputStream.writeInt(0x01);
-        outputStream.write((byte) 0x00);
-        outputStream.write(host.getHostName().getBytes());
-        outputStream.write((byte) 0x00);
-
-        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        if (inputStream.readByte() != (byte) 0x00 || inputStream.readByte() != (byte) 0x5a) {
-            throw new IOException("SOCKS4a connect failed");
-        } else
-            Log.v("SSLConnectionSF", "SOCKS4a connect ok!");
-        inputStream.readShort();
-        inputStream.readInt();
-        return socket;
+        InetSocketAddress unresolvedRemote = InetSocketAddress
+                .createUnresolved(host.getHostName(), remoteAddress.getPort());
+        return super.connectSocket(connectTimeout, socket, host, unresolvedRemote, localAddress, context);
     }
 }
 ```
 It is very easy to use. At first, create HttpClient which uses those factories:
 ```Java
+    //HttpClient tries to resolve host names locally, so by creating this FakeDnsResolver, it can be avoided
+    // Source of this hack: https://stackoverflow.com/a/25203021
+    static class FakeDnsResolver implements DnsResolver {
+        @Override
+        public InetAddress[] resolve(String host) throws UnknownHostException {
+            // Return some fake DNS record for every request, we won't be using it
+            return new InetAddress[] { InetAddress.getByAddress(new byte[] { 1, 1, 1, 1 }) };
+        }
+    }
+
+
     public HttpClient getNewHttpClient() {
 
         Registry<ConnectionSocketFactory> reg = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", new MyConnectionSocketFactory())
                 .register("https", new MySSLConnectionSocketFactory(SSLContexts.createSystemDefault()))
                 .build();
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(reg);
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(reg,new FakeDnsResolver());
         return HttpClients.custom()
                 .setConnectionManager(cm)
                 .build();
@@ -193,6 +160,19 @@ Then set your Tor proxy:
   InetSocketAddress socksaddr = new InetSocketAddress("127.0.0.1", port);
   HttpClientContext context = HttpClientContext.create();
   context.setAttribute("socks.address", socksaddr);
+  //http://wikitjerrta4qgz4.onion/
+  //https://api.duckduckgo.com/?q=whats+my+ip&format=json
+  HttpGet httpGet = new HttpGet("http://wikitjerrta4qgz4.onion/");
+  HttpResponse httpResponse = httpClient.execute(httpGet, context);
+  HttpEntity httpEntity = httpResponse.getEntity();
+  InputStream httpResponseStream = httpEntity.getContent();
+  BufferedReader httpResponseReader = new BufferedReader(
+                        new InputStreamReader(httpResponseStream, "iso-8859-1"), 8);
+  String line = null;
+  while ((line = httpResponseReader.readLine()) != null) {
+    System.out.println(line);
+  }
+  httpResponseStream.close();
 ```
 That's all! You can use your HttpClient like on all other regular requests!
 By the way, since google deprecated httpClient (which was really an ugly plan of Jesse Wilson to promote OkHttp), currently I use the httpClient from [here](https://github.com/smarek/httpclient-android).
