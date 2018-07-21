@@ -1,4 +1,4 @@
-# This repo fixes the a minor DNS resolution issue for onion addresses that I faced when using the sample code provided in the README of [jehy/Tor-Onion-Proxy-Library](https://github.com/jehy/Tor-Onion-Proxy-Library). Check out the sample app included in this repo for reference on how to use this library. Also read the instructions below written by [jehy](https://github.com/jehy) in his fork.
+**This repo fixes the a minor DNS resolution issue for onion addresses that I faced when using the sample code provided in the README of [jehy/Tor-Onion-Proxy-Library](https://github.com/jehy/Tor-Onion-Proxy-Library). Check out the sample app included in this repo for reference on how to use this library. This repo is just a fork of a fork.**
 
 
 Tor Onion Proxy Library
