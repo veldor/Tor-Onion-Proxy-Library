@@ -1,6 +1,3 @@
-**This repo fixes the a minor DNS resolution issue for onion addresses that I faced when using the sample code provided in the README of [jehy/Tor-Onion-Proxy-Library](https://github.com/jehy/Tor-Onion-Proxy-Library). Check out the sample app included in this repo for reference on how to use this library. This repo is just a fork of a fork.**
-
-
 Tor Onion Proxy Library
 =======================
 [![](https://jitpack.io/v/jehy/Tor-Onion-Proxy-Library.svg)](https://jitpack.io/#jehy/Tor-Onion-Proxy-Library)
@@ -8,8 +5,12 @@ Tor Onion Proxy Library
 # What is this fork?
 This is a fork of [Thali Projects's Tor Onion Proxy Library](https://github.com/thaliproject/Tor_Onion_Proxy_Library) which was pretty outdated,
 hard to build, contained no release of library itself and no simple examples. I updated it's components, made build easier and added release library.
+
 Readme is updated to reflect those changes and contains a simple example on how to use this library.
+
 Also I removed all data on non-android builds - there are many other easier ways to use Tor on Windows and OS/X.
+
+Check out the sample app included in this repo for reference on how to use this library.
 
 # What is this project?
 NOTE: This project exists independently of the Tor Project.
