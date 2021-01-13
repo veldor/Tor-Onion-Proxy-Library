@@ -14,11 +14,10 @@ See the Apache 2 License for the specific language governing permissions and lim
 buildscript {
     repositories {
         google()
-        mavenCentral()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:4.1.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0' // for jitpack
     }
 }
@@ -30,23 +29,20 @@ group='com.github.jehy'
 
 repositories {
     google()
-    mavenCentral()
+    jcenter()
 }
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         minSdkVersion 16
+        //noinspection OldTargetApi
         targetSdkVersion 27
-        versionName '0.0.7'
-        versionCode 7
+        versionName '0.0.8'
+        versionCode 8
         archivesBaseName = 'ThaliOnionProxyAndroid'
-    }
-    defaultConfig {
-        minSdkVersion 16 // Please see the readme if you need Sdk support below 16
-        targetSdkVersion 27
     }
 
     packagingOptions {
@@ -59,12 +55,12 @@ android {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.7'
-    androidTestCompile 'org.slf4j:slf4j-android:1.7.7'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    androidTestImplementation 'org.slf4j:slf4j-android:1.7.30'
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     from android.sourceSets.main.java.srcDirs
 }
 
